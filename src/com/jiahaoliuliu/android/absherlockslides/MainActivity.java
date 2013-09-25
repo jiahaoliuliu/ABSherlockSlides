@@ -50,42 +50,43 @@ public class MainActivity extends SherlockFragmentActivity {
 		mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 		
 		mDrawerList = (ListView)findViewById(R.id.listview_drawer);
-		
-		// Set a custom shadow that overlays the main content when the drawer opens
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-		
+
 		mMenuAdapter = new MenuListAdapter(MainActivity.this, title, subtitle, icon);
 		
 		mDrawerList.setAdapter(mMenuAdapter);
 		
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-		// Enable ActionBar app icon to behave as action to toggle nav drawer
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		// ActionBarDrawerToggle ties together the proper interactions
-		// between the sliding drawer and the action bar app icon
-		mDrawerToggle = new ActionBarDrawerToggle(
-				this,
-				mDrawerLayout,
-				R.drawable.ic_drawer,
-				R.string.drawer_open,
-				R.string.drawer_close) {
+		if (mDrawerLayout != null) {
+			// Set a custom shadow that overlays the main content when the drawer opens
+			mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+			// Enable ActionBar app icon to behave as action to toggle nav drawer
+			getSupportActionBar().setHomeButtonEnabled(true);
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			
-			public void OnDrawerClosed(View view) {
-				super.onDrawerClosed(view);
-			}
+			// ActionBarDrawerToggle ties together the proper interactions
+			// between the sliding drawer and the action bar app icon
+			mDrawerToggle = new ActionBarDrawerToggle(
+					this,
+					mDrawerLayout,
+					R.drawable.ic_drawer,
+					R.string.drawer_open,
+					R.string.drawer_close) {
+				
+				public void onDrawerClosed(View view) {
+					super.onDrawerClosed(view);
+				}
+				
+				public void onDrawerOpened(View drawerView) {
+					// Set the title on the action when drawer open
+					getSupportActionBar().setTitle(mDrawerTitle);
+					super.onDrawerOpened(drawerView);
+				}
+			};
 			
-			public void onDrawerOpened(View drawerView) {
-				// Set the title on the action when drawer open
-				getSupportActionBar().setTitle(mDrawerTitle);
-				super.onDrawerOpened(drawerView);
-			}
-		};
-		
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		
+			mDrawerLayout.setDrawerListener(mDrawerToggle);
+		}
+
 		if (savedInstanceState == null) {
 			selectItem(0);
 		}
@@ -135,22 +136,28 @@ public class MainActivity extends SherlockFragmentActivity {
 		// Get the title followed by the position
 		setTitle(title[position]);
 		
-		// Close drawer
-		mDrawerLayout.closeDrawer(mDrawerList);
+		if (mDrawerLayout != null) {
+			// Close drawer
+			mDrawerLayout.closeDrawer(mDrawerList);
+		}
 	}
 
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mDrawerToggle.syncState();
+		if (mDrawerLayout != null) {
+			mDrawerToggle.syncState();
+		}
 	}
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		// Pass any configuration change to the drawer toggles
-		mDrawerToggle.onConfigurationChanged(newConfig);
+		if (mDrawerLayout != null) {
+			// Pass any configuration change to the drawer toggles
+			mDrawerToggle.onConfigurationChanged(newConfig);
+		}
 	}
 	
 	@Override
